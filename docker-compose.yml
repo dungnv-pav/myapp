@@ -1,0 +1,29 @@
+version: '3'
+services:
+  app:
+    container_name: myapp
+    image: myapp:latest
+    build: .
+    ports:
+      - '1323:1323'
+    volumes:
+      - .:/myapp
+    depends_on:
+      - db
+    command: go run main.go
+  db:
+    platform: linux/x86_64
+    image: mysql:8.0.21
+    ports:
+      - '3306:3306'
+    volumes:
+      - go_mysql_data:/var/lib/mysql
+      - ./database/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_USER: 'user'
+      MYSQL_PASSWORD: 'pav123'
+      MYSQL_ROOT_PASSWORD: 'pav123123'
+      MYSQL_DATABASE: 'myapp'
+volumes:
+  go_mysql_data:
